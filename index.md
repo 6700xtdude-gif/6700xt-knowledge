@@ -16,7 +16,7 @@ Start here. Each topic links to its file and shows when it was last verified.
 | [`stack/ollama.md`](stack/ollama.md) | Ollama | 2026-10-10 | ⚠️ |
 | [`stack/comfyui.md`](stack/comfyui.md) | ComfyUI (image) | 2026-10-10 | ⚠️ |
 | [`stack/strata.md`](stack/strata.md) | Strata inference engine | 2026-10-10 | 📄 |
-| [`benchmarks/2026-10-10-baseline.md`](benchmarks/2026-10-10-baseline.md) | 4B Vulkan baseline (measured) | 2026-10-10 | ✅ |
+| [`benchmarks/2026-10-10-baseline.md`](benchmarks/2026-10-10-baseline.md) | Vulkan baseline: 4B + 8B (measured) | 2026-10-10 | ✅ |
 | [`models/what-fits-12gb.md`](models/what-fits-12gb.md) | Model/quant sizing | 2026-10-10 | ⚠️ |
 
 ## The one-paragraph summary
