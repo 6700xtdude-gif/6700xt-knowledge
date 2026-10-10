@@ -5,6 +5,17 @@
 Vulkan is the **lowest-friction way to run inference on a 6700 XT** because it needs only the normal
 AMD graphics driver — no ROCm, no `HSA_OVERRIDE_GFX_VERSION`, no WSL. `[S2]`
 
+**Confirmed on this machine** with llama.cpp Vulkan build `b11541`:
+
+```
+$ llama-cli.exe --list-devices
+Available devices:
+  Vulkan0: AMD Radeon RX 6700 XT (12272 MiB, 11474 MiB free)
+```
+
+The card is detected over Vulkan with no ROCm installed, and it reports its true **~12 GB**
+(12272 MiB). `✅ Verified: 2026-10-10`
+
 ## Who uses Vulkan on this card
 
 - **llama.cpp** — builds with `-DGGML_VULKAN=ON`; widely used on RDNA 2.

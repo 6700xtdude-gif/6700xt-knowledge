@@ -8,9 +8,9 @@ Start here. Each topic links to its file and shows when it was last verified.
 |---|---|---|---|
 | [`hardware/6700xt.md`](hardware/6700xt.md) | Card specs (`gfx1031`, 12 GB) | 2026-10-10 | 📄 |
 | [`stack/rocm-windows.md`](stack/rocm-windows.md) | ROCm/HIP on Windows | 2026-07-31 | 📄 |
-| [`stack/vulkan.md`](stack/vulkan.md) | Vulkan path | 2026-10-10 | ⚠️ |
+| [`stack/vulkan.md`](stack/vulkan.md) | Vulkan path | 2026-10-10 | ✅ |
 | [`stack/hip.md`](stack/hip.md) | Native HIP, no WSL | 2026-10-10 | ⚠️ |
-| [`stack/llama-cpp.md`](stack/llama-cpp.md) | llama.cpp / `llama serve` | 2026-10-10 | 📄 |
+| [`stack/llama-cpp.md`](stack/llama-cpp.md) | llama.cpp / `llama serve` | 2026-10-10 | ✅ |
 | [`stack/unsloth.md`](stack/unsloth.md) | Unsloth training | 2026-10-10 | 📄 |
 | [`stack/lmstudio.md`](stack/lmstudio.md) | LM Studio | 2026-10-10 | ⚠️ |
 | [`stack/ollama.md`](stack/ollama.md) | Ollama | 2026-10-10 | ⚠️ |

@@ -18,9 +18,13 @@ formerly/alongside `llama.app`) with **subcommands** — e.g. `llama serve`. `[S
 
 Both currently exist. Don't assume docs from 2024 describe what you have. Check `--help`.
 
-> **Default port:** the long-standing llama-server default is **`8080`**. The current server README
-> shows a different default listen address — **verify with `llama serve --help`** on your build
-> rather than trusting either number. `🧪 Untested here`
+Confirmed on this machine with build **`b11541`** (version `0.6.0-dev`, commit `f2918cabb`,
+Clang 20.1.8, Windows x86_64): the unified binary ships and exposes subcommands
+`serve`, `cli`, `download`, `version`, `licenses`, `help`, **and** classic `llama-server.exe` is
+still present. `✅ Verified: 2026-10-10`
+
+> **Default port: `9931`.** Confirmed via `llama-server.exe --help` on build `b11541` — the old
+> `8080` default is gone here. `✅ Verified: 2026-10-10`
 
 ## Flags that matter for observability
 
@@ -54,6 +58,6 @@ context headroom on a 12 GB card. Test both 8-bit and 4-bit and log the differen
 
 ## To verify on this machine
 
-- [ ] Which style is present after install (`llama` vs `llama-server.exe`).
-- [ ] Actual default port (`--help`).
+- [x] Which style is present after install (`llama` vs `llama-server.exe`). — **Both**, build `b11541`.
+- [x] Actual default port (`--help`). — **`9931`**.
 - [ ] Whether `--cache-type-v q4_0` is accepted without also quantizing K.
