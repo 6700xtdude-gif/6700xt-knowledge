@@ -60,6 +60,7 @@ Full detail in [`stack/`](stack/); provenance in [`sources.md`](sources.md).
 │   ├── vulkan.md             # the no-ROCm path
 │   ├── hip.md                # native HIP paths
 │   ├── llama-cpp.md          # llama serve vs llama-server.exe
+│   ├── opencode.md           # drive local models from OpenCode (local/auto)
 │   ├── unsloth.md            # training
 │   ├── lmstudio.md
 │   ├── ollama.md
@@ -70,6 +71,7 @@ Full detail in [`stack/`](stack/); provenance in [`sources.md`](sources.md).
 │   ├── native-windows-no-wsl.md
 │   ├── vulkan-fallback.md
 │   └── hip-override.md
+├── scripts/windows/          # local-model launcher + OpenCode wiring
 ├── benchmarks/               # measured results (per machine)
 ├── log/                      # dated session logs
 ├── sources.md                # every URL + type + retrieved date
@@ -82,6 +84,10 @@ The repo ships an [`AGENTS.md`](AGENTS.md) and a skill
 ([`.opencode/skills/6700xt-expert/`](.opencode/skills/6700xt-expert/SKILL.md)) so that an OpenCode
 agent reads this KB *before* answering 6700 XT / local-LLM questions, checks dates, and cites
 sources. Clone the repo and open it in OpenCode — the rules travel with it.
+
+OpenCode can also **run a local model itself**: see [`stack/opencode.md`](stack/opencode.md) and
+[`scripts/windows/`](scripts/windows/) for a single static provider (`local/auto`) that connects to
+whatever `llama-server` has loaded — no config edits per model.
 
 ## Contributing an "avenue of self-exploration"
 

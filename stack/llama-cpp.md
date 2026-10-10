@@ -51,10 +51,22 @@ context headroom on a 12 GB card. Test both 8-bit and 4-bit and log the differen
 - If an upstream tool (like Unsloth) is also injecting its own tools, run llama.cpp with the model's
   own tool-calling **disabled** so the outer agent's tools work. See [`unsloth.md`](unsloth.md).
 
+## OpenAI endpoint quirks (verified here)
+
+- **The request `model` field is ignored.** Sending `model: "totally-bogus-model-xyz"` still returned
+  the loaded model and a correct completion. This is what lets one static OpenCode provider serve
+  *any* loaded GGUF — see [`opencode.md`](opencode.md). `✅ Verified: 2026-10-10`
+- **`--jinja` enables OpenAI tool calls** (`finish_reason: tool_calls` with correct JSON arguments).
+  `✅ Verified: 2026-10-10`
+- **Thinking models need corralling.** Qwen3 spent 135–205 tokens reasoning about trivial prompts;
+  `--reasoning off` cut that to 2 (`--reasoning-budget 0` to 5) while keeping tool calls.
+  `✅ Verified: 2026-10-10`
+
 ## References
 
 - Repo + server docs: `[S4]`
 - Backend build options (Vulkan/HIP): `[S4]`
+- Driving it from OpenCode: [`opencode.md`](opencode.md)
 
 ## To verify on this machine
 
