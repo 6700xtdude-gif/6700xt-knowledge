@@ -29,6 +29,10 @@
 .PARAMETER Thinking
     Reasoning handling. off (default, fast/tool-friendly), on, or auto.
 
+.PARAMETER ReasoningBudget
+    Cap thinking at N tokens (implies reasoning on). Try 256-512 for better
+    tool-planning on agentic tasks; 0 means no thinking.
+
 .PARAMETER GpuLayers
     Layers to offload to the GPU. 99 = all (default).
 
@@ -73,6 +77,10 @@ param(
 
     [ValidateSet('off', 'on', 'auto')]
     [string]$Thinking = 'off',
+
+    # If set, cap thinking at this many tokens (implies reasoning on). 0 = no thinking.
+    # Use ~256-512 for better tool-planning on agentic tasks.
+    [int]$ReasoningBudget = -1,
 
     [int]$GpuLayers = 99,
     [int]$Parallel = 1,
@@ -215,10 +223,16 @@ else {
     $argList.AddRange([string[]]@('-fa', 'on'))
 }
 
-switch ($Thinking) {
-    'off' { $argList.AddRange([string[]]@('--reasoning', 'off')) }
-    'on' { $argList.AddRange([string[]]@('--reasoning', 'on')) }
-    'auto' { $argList.AddRange([string[]]@('--reasoning', 'auto')) }
+if ($PSBoundParameters.ContainsKey('ReasoningBudget')) {
+    # Explicit token budget for thinking (implies reasoning on, but bounded).
+    $argList.AddRange([string[]]@('--reasoning', 'on', '--reasoning-budget', "$ReasoningBudget"))
+}
+else {
+    switch ($Thinking) {
+        'off' { $argList.AddRange([string[]]@('--reasoning', 'off')) }
+        'on' { $argList.AddRange([string[]]@('--reasoning', 'on')) }
+        'auto' { $argList.AddRange([string[]]@('--reasoning', 'auto')) }
+    }
 }
 
 # ---------------------------------------------------------------------------
@@ -231,7 +245,8 @@ Write-Host ("   model      : {0}" -f $selected.Name)
 Write-Host ("   size       : {0:N2} GiB" -f ($selected.Length / 1GB))
 Write-Host ("   runtime    : {0}" -f $runDir)
 Write-Host ("   context    : {0}   KV cache: {1}   parallel: {2}" -f $Context, $Kv, $Parallel)
-Write-Host ("   offload    : -ngl {0}   flash-attn: on   thinking: {1}" -f $GpuLayers, $Thinking)
+$thinkDesc = if ($PSBoundParameters.ContainsKey('ReasoningBudget')) { "budget=$ReasoningBudget" } else { $Thinking }
+Write-Host ("   offload    : -ngl {0}   flash-attn: on   thinking: {1}" -f $GpuLayers, $thinkDesc)
 Write-Host ("   endpoint   : http://127.0.0.1:{0}/v1" -f $Port)
 Write-Rule
 
