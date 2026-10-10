@@ -16,6 +16,16 @@ Available devices:
 The card is detected over Vulkan with no ROCm installed, and it reports its true **~12 GB**
 (12272 MiB). `✅ Verified: 2026-10-10`
 
+Device capabilities reported by the Vulkan backend:
+
+```
+ggml_vulkan: 0 = AMD Radeon RX 6700 XT (AMD proprietary driver)
+  | uma: 0 | fp16: 1 | bf16: 0 | fp4: 0 | warp size: 32 | matrix cores: none
+```
+
+Notes: **fp16 supported, bf16 not**; **Wave32**; **no matrix cores** (no WMMA) — this is why RDNA 2
+without ROCm/composable-kernel paths leans on classic SIMD rather than tensor tiles. `✅ Verified: 2026-10-10`
+
 ## Who uses Vulkan on this card
 
 - **llama.cpp** — builds with `-DGGML_VULKAN=ON`; widely used on RDNA 2.
