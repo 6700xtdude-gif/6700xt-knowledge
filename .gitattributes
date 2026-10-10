@@ -1,0 +1,14 @@
+# Normalize line endings for a public repo that will be cloned on
+# Windows, WSL, and Linux (Arch/Omarchy).
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets are never converted.
+*.png binary
+*.jpg binary
+*.gif binary
+*.gguf binary

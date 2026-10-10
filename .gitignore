@@ -1,0 +1,30 @@
+# Model files and heavy artifacts
+*.gguf
+*.safetensors
+*.bin
+*.pt
+*.onnx
+models/
+
+# Local environments
+.venv/
+venv/
+env/
+node_modules/
+
+# Logs and scratch
+*.log
+*.tmp
+scratch/
+.cache/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets — never commit these
+.env
+*.key
+*.token
+secrets/
