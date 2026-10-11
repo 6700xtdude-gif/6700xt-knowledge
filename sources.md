@@ -18,8 +18,11 @@ Types: `primary` (vendor/maintainer), `repo`, `news`, `forum`.
 | S9 | https://github.com/Niko1221/Strata · https://github.com/Niko1221/Strata/blob/main/docs/OLDER_GPUS.md | repo | 2026-10-10 | RX 6700 XT experimental HIP path `--backend hip`, "unvalidated" (#524); API on `127.0.0.1:8080`; MoE expert offload |
 | S10 | Microsoft WSL / Windows Blogs (WSL open source; WSL containers GA ~2026-09-29) | primary/news | 2026-10-10 | WSL open source; `wslc.exe`/`container.exe`; containerization push; **exact URL to be captured** |
 | S11 | https://opencode.ai/v2/docs/ (config, providers, models, migrate-v1) | primary | 2026-10-10 | OpenCode **V2** uses `providers` + `package` + `settings`; model shape `capabilities`/`limit`; auto-discovers Ollama/LM Studio/vLLM only; `opencode.jsonc` at `~/.config/opencode/` |
+| S12 | https://github.com/unslothai/llama.cpp (release `b11539-mix-2500203`) | repo | 2026-10-10 | Unsloth's prebuilt llama.cpp **ROCm** asset for `gfx103X` (→ `gfx1030/1031/1032/1034`); backend `rocm`; source commit `1cdd47c`; recorded locally in `.unsloth\llama.cpp\UNSLOTH_PREBUILT_INFO.json` |
 
 ## Housekeeping
 
 - `[S3]` and `[S10]` need their exact URLs filled in the next time we are online. Marked inline.
+- `[S12]` points at the repo, not a specific release page — the exact release URL is recorded locally
+  in `UNSLOTH_PREBUILT_INFO.json` (`binary_release_tag: b11539-mix-2500203`). Replace when convenient.
 - Add one row per new claim source. Prefer `primary`/`repo` over `forum`.

@@ -37,12 +37,34 @@ The whole point of running standalone is seeing and controlling these:
 | `--cache-type-v q8_0\|q4_0` | **KV-cache V** precision (note: some builds require K set too) |
 | `--flash-attn` | flash attention on/off |
 | `-ngl <n>` / `--n-gpu-layers` | layers offloaded to GPU |
+| `--fit on\|off` | **auto-fit to device memory** — picks the GPU layer count for you (`--fit-ctx <n>` caps the context it may pick). Essential for models larger than VRAM. |
 | `--jinja` | use the model's chat template (important for tool calling) |
 | `--no-context-shift` | stop silent context truncation |
 | `--verbose` | log what the runtime actually did |
 
 KV cache quantization (`q8_0`, `q4_0`) is how you trade a little quality for a lot of VRAM and
 context headroom on a 12 GB card. Test both 8-bit and 4-bit and log the difference.
+
+## `--fit` — serving a model larger than VRAM
+
+`--fit on` (with an optional `--fit-ctx <n>` ceiling) makes llama.cpp **measure free device memory at
+load and choose the GPU layer count itself**, keeping the remainder of the weights in system RAM. It
+prints the whole decision at `--verbosity 4`, e.g. on this box:
+
+```
+projected to use 15717 MiB of device memory vs. 11508 MiB of free device memory
+cannot meet free memory target of 1024 MiB, need to reduce device memory by 5232 MiB
+  - ROCm0 (AMD Radeon RX 6700 XT): 40 layers, 10274 MiB used, 1234 MiB free
+load_tensors: offloaded 40/66 layers to GPU
+```
+
+Result: a **14.3 GB / 27 B** GGUF runs on 12 GB (≈10.3 GB VRAM + ≈6.1 GB RAM) at **~4 tok/s** decode.
+This is the modern replacement for hand-tuning `-ngl`. `✅ Verified: 2026-10-10` — see
+[`../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md`](../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md).
+
+> **Unsloth's "mix" build is modular.** `llama-server.exe` is a ~25 KB shim; the code lives in
+> `llama-server-impl.dll` / `llama-common.dll`, and `llama-fit-params-impl.dll` implements `--fit`.
+> Don't be fooled by the tiny `.exe` size. `✅ Verified: 2026-10-10`
 
 ## Serving to the local stack
 

@@ -1,10 +1,28 @@
 # Native HIP (no WSL) on Windows
 
-**Verified:** 2026-10-10 · `⚠️ Reported`
+**Verified:** 2026-10-10 · `✅ Verified` (one real HIP run on `gfx1031`) · `⚠️ Reported` (vLLM path below)
 
 The most interesting recent development for RX 6000 owners is **native Windows HIP working without
 WSL**. Historically the advice was "install ROCm inside WSL2"; that requirement appears to be
 weakening. `[S3]`
+
+## ✅ Confirmed here: Unsloth's bundled ROCm build runs on `gfx1031`, no WSL
+
+On 2026-10-10 we found Unsloth Studio serving a 27 B model through its own prebuilt llama.cpp built
+for **ROCm**, and the device line at load was unambiguous:
+
+```
+ggml_cuda_init: found 1 ROCm devices (Total VRAM: 12272 MiB):
+  Device 0: AMD Radeon RX 6700 XT, gfx1031 (0x1031), VMM: no, Wave Size: 32, VRAM: 12272 MiB
+```
+
+- Asset: `app-b11539-mix-2500203-windows-x64-rocm-gfx103X.zip` (`gfx103X` → `gfx1030/1031/1032/1034`).
+- **ROCm runtime 7.14**, **no WSL**, and **no `HSA_OVERRIDE_GFX_VERSION`** in the launch command —
+  the kernels loaded and 40 layers offloaded to the GPU. `✅ Verified: 2026-10-10`
+
+This is the strongest evidence we have so far that "`gfx1031` is unsupported by AMD" (see
+[`rocm-windows.md`](rocm-windows.md)) is a *support-matrix* statement, not a *capability* statement.
+`[S12]` Full write-up: [`../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md`](../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md).
 
 ## Reported working setup
 
@@ -36,8 +54,9 @@ If native HIP is reliable, we can:
 
 ## To verify next
 
-- [ ] Install ROCm 7.15 on this machine, run `rocminfo`, confirm `gfx1031` is enumerated.
-- [ ] (Re)test with and without `HSA_OVERRIDE_GFX_VERSION`.
-- [ ] Serve a 7–8B GGUF/model via vLLM and record tok/s vs Vulkan.
+- [x] See HIP actually execute on `gfx1031` on Windows — **done** via Unsloth's bundled ROCm 7.14 build (no WSL, no `HSA_OVERRIDE`). `✅ 2026-10-10`
+- [ ] Stand up ROCm 7.15 *ourselves* (not Unsloth's bundle) and run `rocminfo`; confirm `gfx1031` is enumerated.
+- [ ] (Re)test with and without `HSA_OVERRIDE_GFX_VERSION` on a self-built binary.
+- [ ] Serve a 7–8B model via vLLM (HIP) and record tok/s vs Vulkan — isolate the engine from the model size.
 
 See also [`rocm-windows.md`](rocm-windows.md) and [`../recipes/hip-override.md`](../recipes/hip-override.md).

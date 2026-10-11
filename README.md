@@ -42,9 +42,10 @@ Confidence tags:
 |---|---|---|---|
 | AMD ROCm/HIP SDK on Windows | ❌ **Officially unsupported** (`gfx1031`) | 📄 | 2026-07-31 |
 | `HSA_OVERRIDE_GFX_VERSION=10.3.0` | Still the common ROCm workaround | ⚠️ | 2026-10-10 |
-| Vulkan (llama.cpp / LM Studio) | Works, no ROCm needed | ⚠️ | 2026-10-10 |
-| Native Windows HIP (no WSL) | Reported working (vLLM + ROCm 7.15) | ⚠️ | 2026-10-10 |
-| Unsloth training on `gfx1031` | Vendor claims full support | 📄 | 2026-10-10 |
+| Vulkan (llama.cpp / LM Studio) | Works, no ROCm needed | ✅ | 2026-10-10 |
+| Native Windows HIP (no WSL) | **Runs on `gfx1031`** via Unsloth's bundled ROCm 7.14 — no `HSA_OVERRIDE` needed | ✅ | 2026-10-10 |
+| Unsloth on `gfx1031` | Bundled **ROCm/HIP** llama.cpp serves (inference proven); training unverified | ✅ / 📄 | 2026-10-10 |
+| A **27 B** model on 12 GB | Runs via `--fit` hybrid offload — **≈4 tok/s** decode, ≈10.3 GB VRAM + ≈6.1 GB RAM | ✅ | 2026-10-10 |
 | Strata (Qwen3.8-Flash-Next) | Runs via `--backend hip`, unvalidated | 📄 | 2026-10-10 |
 
 Full detail in [`stack/`](stack/); provenance in [`sources.md`](sources.md).
@@ -61,7 +62,7 @@ Full detail in [`stack/`](stack/); provenance in [`sources.md`](sources.md).
 │   ├── hip.md                # native HIP paths
 │   ├── llama-cpp.md          # llama serve vs llama-server.exe
 │   ├── opencode.md           # drive local models from OpenCode (local/auto)
-│   ├── unsloth.md            # training
+│   ├── unsloth.md            # train + bundled ROCm/HIP serving
 │   ├── lmstudio.md
 │   ├── ollama.md
 │   ├── comfyui.md
