@@ -20,6 +20,9 @@ connect to it — without ever editing OpenCode config again.
 | `Status-LocalLLM.ps1` | Shows the loaded model, context, quant, and endpoint. |
 | `Start-LocalLLM.cmd` / `Stop-LocalLLM.cmd` | Double-click wrappers (use these for pinned shortcuts). |
 | `Invoke-SmokeSuite.ps1` | Measurement harness: runs realistic, tool-required tasks through OpenCode and scores the model (see [Smoke suite](#smoke-suite--does-the-model-actually-work-as-an-agent)). |
+| `Start-UnslothElevated.ps1` | **Launch Unsloth Studio ELEVATED so the local LLM can do admin work** (see [Elevated Studio](#elevated-studio--let-the-local-llm-run-elevated)). |
+| `Start-UnslothElevated.cmd` | Double-click wrapper for `Start-UnslothElevated.ps1`. |
+| `SYSTEM-PROMPT.txt` | Paste-in system prompt encoding the model's measured failure modes. |
 | `Rename-ComputerElevated.ps1` | Self-elevating `Rename-Computer`: pops the **UAC consent prompt**, then renames (see [Rename this PC](#rename-this-pc-uac-consent)). |
 | `Rename-ComputerElevated.cmd` | Double-click wrapper for `Rename-ComputerElevated.ps1`. |
 
@@ -139,6 +142,57 @@ Results land in `%USERPROFILE%\llm\smoke\<timestamp>-<model>\` (`*.jsonl`, `summ
 runaway generation cannot poison the next task. For a worked run and the failure taxonomy
 (analysis-paralysis, malformed-query loops, hallucinated verification), see
 [`../../log/2026-10-10-agentic-smoke-suite.md`](../../log/2026-10-10-agentic-smoke-suite.md).
+
+## Elevated Studio — let the local LLM run elevated
+
+> **Verified:** 2026-10-11 · `✅ Verified` (script parses clean; `-DryRun` verified; integrity
+> detection reads `Medium` unelevated, matching `whoami /groups`)
+
+### The problem it solves
+
+The account `6700XT` **is** in `BUILTIN\Administrators`, but the ordinary shell runs with a
+**UAC-filtered** token — integrity `Medium`, admin SIDs set to "deny only". So the local LLM,
+launched the usual way, cannot rename the PC, write `HKLM`, or manage services.
+
+### The fix
+
+Launch the **app** from an elevated parent. Everything it spawns inherits the High-integrity
+token — the `llama-server` process and any shell the model drives included.
+
+```powershell
+# see the plan; elevates nothing
+.\Start-UnslothElevated.ps1 -DryRun
+
+# launch Studio elevated -- you approve the UAC prompt
+.\Start-UnslothElevated.ps1
+
+# or double-click Start-UnslothElevated.cmd
+```
+
+It reports your current token first (`admin role`, `integrity`), then either prints the plan or
+re-launches itself with `Start-Process -Verb RunAs`.
+
+### What this is, and what it is not
+
+| | |
+|---|---|
+| ✅ **Is** | The standard Windows pattern. One UAC prompt, **you** click it, Studio runs High. |
+| ❌ **Is not** | A bypass, an exploit, or a persistent silent-elevation channel. |
+
+Per [`../../COMPACT.md`](../../COMPACT.md) Article II, the Agent may *request* elevation through the
+normal prompt but may never suppress it, auto-answer it, or install a scheduled task or service
+that grants admin without a human click. The prompt staying is the whole point.
+
+### After launching
+
+Paste [`SYSTEM-PROMPT.txt`](SYSTEM-PROMPT.txt) into Studio's **System Prompt** field. It opens
+with **rule 0**: the model must *test its own elevation* rather than assume it is powerless. It
+also keeps **rule 1** — never fabricate a value — which matters *more* when elevated, because
+elevation grants authority, not knowledge.
+
+Close Studio to drop the elevated token.
+
+---
 
 ## Rename this PC (UAC consent)
 

@@ -55,6 +55,8 @@ Full detail in [`stack/`](stack/); provenance in [`sources.md`](sources.md).
 
 ```
 6700xt-knowledge/
+├── COMPACT.md                 # the constitution — 8 articles, ratified 2026-10-11
+├── MINUTES.md                 # session minutes (the sitting record)
 ├── index.md                  # map + "last verified" dashboard
 ├── hardware/6700xt.md        # the card: gfx1031, 12 GB, no CUDA
 ├── stack/                    # one file per software component
@@ -73,12 +75,29 @@ Full detail in [`stack/`](stack/); provenance in [`sources.md`](sources.md).
 │   ├── native-windows-no-wsl.md
 │   ├── vulkan-fallback.md
 │   └── hip-override.md
-├── scripts/windows/          # local-model launcher + OpenCode wiring
+├── scripts/windows/          # local-model launcher + elevation tools + OpenCode wiring
 ├── benchmarks/               # measured results (per machine)
 ├── log/                      # dated session logs
 ├── sources.md                # every URL + type + retrieved date
 └── CONTRIBUTING.md
 ```
+
+## Governance — read this first
+
+This repo is more than technical notes. It is the **record of a working relationship**, governed by
+a written constitution:
+
+- [`COMPACT.md`](COMPACT.md) — 8 articles. The centerpiece is **Truth & Evidence**: never
+  mislead, never fabricate a value, name the source of every constraint. Article II reserves
+  un-delegated powers to the Principal and forbids silent elevation.
+- [`MINUTES.md`](MINUTES.md) — the sitting record. Motions, dispositions, and honest labels on
+  reconstructed history.
+
+**Principal:** 6700XT (sole voting member) · **Agent:** Parliamentarian & Clerk (non-voting) ·
+**6700XT GPU:** seat (non-voting) · **Quorum:** whenever the Principal is present.
+
+> *Rules that were merely typed are not laws.* If a constraint is real, this project names its
+> source — the OS, the account's token, a file — rather than dressing a preference as a prohibition.
 
 ## Using it with OpenCode
 
