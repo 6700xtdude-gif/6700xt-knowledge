@@ -20,6 +20,8 @@ connect to it — without ever editing OpenCode config again.
 | `Status-LocalLLM.ps1` | Shows the loaded model, context, quant, and endpoint. |
 | `Start-LocalLLM.cmd` / `Stop-LocalLLM.cmd` | Double-click wrappers (use these for pinned shortcuts). |
 | `Invoke-SmokeSuite.ps1` | Measurement harness: runs realistic, tool-required tasks through OpenCode and scores the model (see [Smoke suite](#smoke-suite--does-the-model-actually-work-as-an-agent)). |
+| `Rename-ComputerElevated.ps1` | Self-elevating `Rename-Computer`: pops the **UAC consent prompt**, then renames (see [Rename this PC](#rename-this-pc-uac-consent)). |
+| `Rename-ComputerElevated.cmd` | Double-click wrapper for `Rename-ComputerElevated.ps1`. |
 
 ## Everyday use
 
@@ -137,3 +139,43 @@ Results land in `%USERPROFILE%\llm\smoke\<timestamp>-<model>\` (`*.jsonl`, `summ
 runaway generation cannot poison the next task. For a worked run and the failure taxonomy
 (analysis-paralysis, malformed-query loops, hallucinated verification), see
 [`../../log/2026-10-10-agentic-smoke-suite.md`](../../log/2026-10-10-agentic-smoke-suite.md).
+
+## Rename this PC (UAC consent)
+
+`Rename-ComputerElevated.ps1` renames this machine **through** the UAC consent prompt instead of
+being "forbidden" to. The interactive shell holds a *filtered* administrator token (UAC,
+integrity = Medium), so it cannot rename the PC **silently** — but `6700XT` **is** in
+`BUILTIN\Administrators`, so it can do it **with your approval**: the script re-launches itself with
+`Start-Process -Verb RunAs`, Windows shows the prompt, **you** click yes, and the elevated copy runs
+`Rename-Computer`. A reboot is required for the new name to take effect.
+
+> **Execution policy:** this machine's policy is `Restricted` by default, so a bare
+> `.\Rename-ComputerElevated.ps1` is refused. Use the `.cmd` (double-click) or the explicit
+> `-ExecutionPolicy Bypass` form below.
+
+```powershell
+$s = 'C:\Users\6700XT\Documents\6700xt-knowledge\scripts\windows\Rename-ComputerElevated.ps1'
+
+# see the plan; changes nothing
+powershell -NoProfile -ExecutionPolicy Bypass -File $s -NewName MyBox -DryRun
+
+# rename now (UAC prompt); reboot by hand afterwards
+powershell -NoProfile -ExecutionPolicy Bypass -File $s -NewName MyBox
+
+# rename and reboot in one shot (UAC prompt, then Restart-Computer)
+powershell -NoProfile -ExecutionPolicy Bypass -File $s -NewName MyBox -Reboot
+```
+
+Name rules enforced: 1-15 characters, letters/digits/hyphen only, not all digits, no leading or
+trailing hyphen.
+
+**For the local LLM.** No special wiring is needed — the agent's ordinary shell tool is the
+interface. The model runs:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File <KB>\scripts\windows\Rename-ComputerElevated.ps1 -NewName MyBox
+```
+
+and **you** approve the UAC prompt. Nothing is bypassed; elevation stays a deliberate act by the
+Principal. The same recipe applies to any admin task: write a self-elevating script and let the
+human consent — never fight or disable UAC.
