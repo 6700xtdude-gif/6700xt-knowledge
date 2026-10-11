@@ -112,5 +112,6 @@ OpenCode will not over-fill the slot. If you raise `-Context`, raise `limit.cont
 
 - [x] OpenCode reaches a local llama.cpp model as `local/auto`. — ✅ 2026-10-10
 - [x] `--jinja` tool calls surface in OpenCode. — ✅ 2026-10-10
-- [ ] Drive OpenCode with the **27B** via `-Fit` and time a real multi-step task end-to-end.
+- [x] Drive OpenCode with the **27B** via `-Fit`. — ✅ 2026-10-10: `opencode run --model local/auto "…pong"` → `pong`; tool calls emit valid JSON. See [`../log/2026-10-10-local-27b-offload-opencode.md`](../log/2026-10-10-local-27b-offload-opencode.md).
+- [ ] Time a real **multi-step** task on the 27B (how long is a tool loop at 4.65 tok/s?).
 - [ ] How well an 8B local model completes a real multi-step agent task vs a hosted model.

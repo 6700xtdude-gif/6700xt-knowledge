@@ -87,6 +87,10 @@ for long agent turns. `Verified: 2026-10-10`
 See [`../scripts/windows/README.md`](../scripts/windows/README.md) (launcher) and
 [`../stack/opencode.md`](../stack/opencode.md) (driving it from OpenCode).
 
+**Reproduced standalone** on the local **Vulkan** build: same **40/66** split (`llama-fit-params` →
+`-ngl 40`), **9.8 GB VRAM**, **4.65 tok/s** decode, and OpenCode `local/auto` works — including tool calls.
+`✅ Verified: 2026-10-10` See [`../log/2026-10-10-local-27b-offload-opencode.md`](../log/2026-10-10-local-27b-offload-opencode.md).
+
 Full detail: [`../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md`](../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md).
 
 ## Still to measure
