@@ -4,7 +4,10 @@
 *.bin
 *.pt
 *.onnx
-models/
+# Ignore artifacts dropped in models/ but KEEP the KB's own docs there
+# (models/what-fits-12gb.md is tracked and linked from index.md/README.md).
+models/*
+!models/*.md
 
 # Local environments
 .venv/

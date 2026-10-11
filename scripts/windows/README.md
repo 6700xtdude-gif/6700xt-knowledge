@@ -32,6 +32,12 @@ connect to it — without ever editing OpenCode config again.
 # Tighter VRAM if you need headroom
 .\Start-LocalLLM.ps1 -Model Qwen3-8B -Context 16384 -Kv q4_0
 
+# A model BIGGER than VRAM (hybrid GPU+CPU via --fit)
+.\Start-LocalLLM.ps1 -Model Qwen3.8-27B -Fit -FitCtx 32384 -Kv q8_0
+
+# Show the exact llama-server command without launching anything
+.\Start-LocalLLM.ps1 -Model Qwen3.8-27B -Fit -FitCtx 32384 -DryRun
+
 .\Status-LocalLLM.ps1
 .\Stop-LocalLLM.ps1
 ```
@@ -58,3 +64,53 @@ Pass `-Hidden` to suppress the server console, or `-NoStop` to leave an existing
 
 > Runtime folder is auto-detected: the newest `C:\Users\6700XT\llm\bin\llama-*` containing
 > `llama-server.exe`. Override with `-LlamaDir <folder>`.
+
+## Serving a model LARGER than 12 GB — `-Fit`
+
+`-ngl 99` asks for **all** layers on the GPU. That is fine for a fully-offloadable model and fatal
+for a 14 GB one. For a model bigger than VRAM, pass **`-Fit`**: the launcher omits `-ngl` (default
+`auto`) and adds `--fit on`, so llama.cpp **measures free VRAM at load and picks the GPU layer
+split**, keeping the rest in system RAM. `✅ Verified: 2026-10-10`
+
+```powershell
+# a 14.3 GB / 27B GGUF on a 12 GB card -> hybrid GPU+CPU
+.\Start-LocalLLM.ps1 -Model Qwen3.8-27B -Fit -FitCtx 32384 -Kv q8_0 -NoContextShift
+```
+
+Which resolves to (check it yourself with `-DryRun`):
+
+```
+llama-server.exe -m ...\Qwen3.8-27B-UD-Q4_K_S.gguf -c 32768 -np 1 --jinja `
+  --host 127.0.0.1 --port 9931 --fit on --fit-ctx 32384 --no-context-shift `
+  -fa on -ctk q8_0 -ctv q8_0 --reasoning off
+```
+
+Measured here: **40/66 layers on GPU**, ≈10.3 GB VRAM + ≈6.1 GB RAM, **≈4 tok/s** decode,
+180–250 tok/s prefill. Details:
+[`../../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md`](../../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md).
+
+### Switches
+
+| Switch | Effect |
+|---|---|
+| `-Fit` | omit `-ngl`, add `--fit on` (auto GPU/CPU split for models > VRAM) |
+| `-FitCtx N` | with `-Fit`, the **minimum** context `--fit` may settle on (llama.cpp floor 4096) |
+| `-NoContextShift` | add `--no-context-shift` (never silently truncate context) |
+| `-DryRun` | print the exact command and exit — **no** stop, **no** launch |
+| `-NoStop` | don't kill an existing `llama-server` first |
+| `-LlamaDir <dir>` | use a specific llama.cpp build (e.g. Unsloth's HIP build — see below) |
+
+> ⚠️ **The launcher stops *any* process named `llama-server`** before starting — including one
+> **Unsloth Studio** launched. And two 27B models do not fit in 12 GB, so don't run the standalone
+> 27B while Studio is serving one. Close the Studio model first (or accept that `-Fit` run will stop
+> it). Use `-DryRun` to inspect without stopping anything.
+
+### Faithful-to-Unsloth variant
+
+Studio served this exact model with its bundled **ROCm/HIP** llama.cpp build. To reuse *that* binary
+instead of the local Vulkan build:
+
+```powershell
+.\Start-LocalLLM.ps1 -Model Qwen3.8-27B -Fit -FitCtx 32384 -Kv q8_0 `
+  -LlamaDir "C:\Users\6700XT\.unsloth\llama.cpp\build\bin\Release"
+```

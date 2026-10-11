@@ -34,7 +34,24 @@
     tool-planning on agentic tasks; 0 means no thinking.
 
 .PARAMETER GpuLayers
-    Layers to offload to the GPU. 99 = all (default).
+    Layers to offload to the GPU. 99 = all (default). Ignored when -Fit is set.
+
+.PARAMETER Fit
+    Serve a model LARGER than VRAM. Omits -ngl and passes --fit on, so llama.cpp
+    measures free VRAM at load and picks the GPU layer split; the rest stays in
+    system RAM. This is how a 14 GB / 27B GGUF runs on the 12 GB card.
+
+.PARAMETER FitCtx
+    With -Fit, the MINIMUM context that --fit may settle on (llama.cpp floor is
+    4096). Pin it to your working window, e.g. 32384, while still allowing the
+    layer offload.
+
+.PARAMETER NoContextShift
+    Pass --no-context-shift so the context is never silently truncated mid-generation.
+
+.PARAMETER DryRun
+    Print the exact llama-server command line and exit without stopping or launching
+    anything. Handy for checking the flags, e.g. the --fit split you are about to run.
 
 .PARAMETER Parallel
     Concurrent request slots (default 1).
@@ -63,6 +80,10 @@
 .EXAMPLE
     .\Start-LocalLLM.ps1 -Model Qwen3-8B -Context 16384 -Kv q4_0
     Tighter context, smaller KV cache.
+
+.EXAMPLE
+    .\Start-LocalLLM.ps1 -Model Qwen3.8-27B -Fit -FitCtx 32384 -Kv q8_0
+    A 14 GB / 27B GGUF that does NOT fit in 12 GB: hybrid GPU+CPU via --fit on.
 #>
 [CmdletBinding()]
 param(
@@ -83,6 +104,14 @@ param(
     [int]$ReasoningBudget = -1,
 
     [int]$GpuLayers = 99,
+
+    [switch]$Fit,
+    [int]$FitCtx = 0,
+    [switch]$NoContextShift,
+
+    # Print the exact llama-server command and exit without launching anything.
+    [switch]$DryRun,
+
     [int]$Parallel = 1,
 
     [string]$LlamaDir,
@@ -193,7 +222,9 @@ else {
 # ---------------------------------------------------------------------------
 #  Stop any previous server
 # ---------------------------------------------------------------------------
-if (-not $NoStop) {
+# NOTE: this matches by process name, so it will also stop a llama-server that
+# Unsloth Studio launched. Never fires on -DryRun.
+if (-not $NoStop -and -not $DryRun) {
     $existing = Get-Process llama-server -ErrorAction SilentlyContinue
     if ($existing) {
         Write-Host "`n  Stopping $($existing.Count) existing llama-server process(es)..." -ForegroundColor DarkYellow
@@ -210,11 +241,22 @@ $argList.AddRange([string[]]@(
         '-m', $selected.FullName,
         '-c', "$Context",
         '-np', "$Parallel",
-        '-ngl', "$GpuLayers",
         '--jinja',
         '--host', '127.0.0.1',
         '--port', "$Port"
     ))
+
+if ($Fit) {
+    # Leave -ngl unset ('auto') and let --fit choose the split. Passing an explicit
+    # -ngl would make it a "set" arg that --fit is not allowed to adjust.
+    $argList.Add('--fit'); $argList.Add('on')
+    if ($FitCtx -gt 0) { $argList.Add('--fit-ctx'); $argList.Add("$FitCtx") }
+}
+else {
+    $argList.AddRange([string[]]@('-ngl', "$GpuLayers"))
+}
+
+if ($NoContextShift) { $argList.Add('--no-context-shift') }
 
 if ($Kv -ne 'f16') {
     $argList.AddRange([string[]]@('-fa', 'on', '-ctk', $Kv, '-ctv', $Kv))
@@ -246,9 +288,16 @@ Write-Host ("   size       : {0:N2} GiB" -f ($selected.Length / 1GB))
 Write-Host ("   runtime    : {0}" -f $runDir)
 Write-Host ("   context    : {0}   KV cache: {1}   parallel: {2}" -f $Context, $Kv, $Parallel)
 $thinkDesc = if ($PSBoundParameters.ContainsKey('ReasoningBudget')) { "budget=$ReasoningBudget" } else { $Thinking }
-Write-Host ("   offload    : -ngl {0}   flash-attn: on   thinking: {1}" -f $GpuLayers, $thinkDesc)
+$offloadDesc = if ($Fit) { if ($FitCtx -gt 0) { "--fit on (ctx >= $FitCtx)" } else { '--fit on' } } else { "-ngl $GpuLayers" }
+Write-Host ("   offload    : {0}   flash-attn: on   thinking: {1}" -f $offloadDesc, $thinkDesc)
 Write-Host ("   endpoint   : http://127.0.0.1:{0}/v1" -f $Port)
 Write-Rule
+
+if ($DryRun) {
+    Write-Host '   cmd        : (dry run - nothing launched)' -ForegroundColor DarkYellow
+    Write-Host ("   {0} {1}" -f $serverExe, ($argList -join ' ')) -ForegroundColor DarkGray
+    exit 0
+}
 
 $window = if ($Hidden) { 'Hidden' } else { 'Minimized' }
 $proc = Start-Process -FilePath $serverExe -ArgumentList $argList.ToArray() -PassThru -WindowStyle $window
