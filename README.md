@@ -47,6 +47,7 @@ Confidence tags:
 | Unsloth on `gfx1031` | Bundled **ROCm/HIP** llama.cpp serves (inference proven); training unverified | ✅ / 📄 | 2026-10-10 |
 | A **27 B** model on 12 GB | Runs via `--fit` hybrid offload — **≈4 tok/s** decode, ≈10.3 GB VRAM + ≈6.1 GB RAM | ✅ | 2026-10-10 |
 | Strata (Qwen3.8-Flash-Next) | Runs via `--backend hip`, unvalidated | 📄 | 2026-10-10 |
+| A local model as an *agent* (8B / 14B) | Passes bounded tasks, **fails open-ended event-log triage** | ✅ | 2026-10-10 |
 
 Full detail in [`stack/`](stack/); provenance in [`sources.md`](sources.md).
 

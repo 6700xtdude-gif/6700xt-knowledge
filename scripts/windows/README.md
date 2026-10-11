@@ -19,6 +19,7 @@ connect to it — without ever editing OpenCode config again.
 | `Stop-LocalLLM.ps1` | Stops llama-server. |
 | `Status-LocalLLM.ps1` | Shows the loaded model, context, quant, and endpoint. |
 | `Start-LocalLLM.cmd` / `Stop-LocalLLM.cmd` | Double-click wrappers (use these for pinned shortcuts). |
+| `Invoke-SmokeSuite.ps1` | Measurement harness: runs realistic, tool-required tasks through OpenCode and scores the model (see [Smoke suite](#smoke-suite--does-the-model-actually-work-as-an-agent)). |
 
 ## Everyday use
 
@@ -114,3 +115,25 @@ instead of the local Vulkan build:
 .\Start-LocalLLM.ps1 -Model Qwen3.8-27B -Fit -FitCtx 32384 -Kv q8_0 `
   -LlamaDir "C:\Users\6700XT\.unsloth\llama.cpp\build\bin\Release"
 ```
+
+## Smoke suite — does the model actually work as an agent?
+
+`Invoke-SmokeSuite.ps1` drives a *served* model through **real, tool-required tasks** via
+`opencode run --model <m> --agent build --auto --format json`, then reports per task: wall time,
+steps, tool calls, **distinct** commands, **max repeat**, and the final text. Scoring is manual —
+it is a *measurement harness*, not runtime scaffolding for the model.
+
+```powershell
+# serve something first (the launcher waits for /health)
+.\Start-LocalLLM.ps1 -Model Qwen3-8B -Context 32768 -Kv q8_0 -Hidden
+
+# all tasks, or a subset
+.\Invoke-SmokeSuite.ps1 -Model local/auto
+.\Invoke-SmokeSuite.ps1 -Model local/auto -Only T1,T4 -TimeoutSec 180
+```
+
+Results land in `%USERPROFILE%\llm\smoke\<timestamp>-<model>\` (`*.jsonl`, `summary.csv`,
+`summary.json`). Between tasks it waits for the single llama.cpp slot to go idle, so a killed
+runaway generation cannot poison the next task. For a worked run and the failure taxonomy
+(analysis-paralysis, malformed-query loops, hallucinated verification), see
+[`../../log/2026-10-10-agentic-smoke-suite.md`](../../log/2026-10-10-agentic-smoke-suite.md).

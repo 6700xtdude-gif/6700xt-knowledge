@@ -31,7 +31,7 @@ New-Item -ItemType HardLink -Path C:\Users\6700XT\llm\models\Qwen3.8-27B-UD-Q4_K
   -c 32384 -np 1 --fit on --fit-ctx 32384 -fa on -ctk q8_0 -ctv q8_0
 
 # 3. serve it (new -Fit path: omits -ngl, adds --fit on)
-C:\Users\6700XT\llm\scripts\Start-LocalLLM.cmd -Model Qwen3.8-27B -Fit -FitCtx 32384 -Kv q8_0 -NoContextShift -Hidden
+C:\Users\6700XT\Documents\6700xt-knowledge\scripts\windows\Start-LocalLLM.cmd -Model Qwen3.8-27B -Fit -FitCtx 32384 -Kv q8_0 -NoContextShift -Hidden
 
 # 4. drive it from OpenCode (no config change)
 opencode-cli.exe run --model local/auto "Reply with exactly one word: pong"

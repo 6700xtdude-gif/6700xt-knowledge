@@ -20,6 +20,7 @@ Start here. Each topic links to its file and shows when it was last verified.
 | [`benchmarks/2026-10-10-baseline.md`](benchmarks/2026-10-10-baseline.md) | Vulkan baseline: 4B + 8B (measured) | 2026-10-10 | ✅ |
 | [`log/2026-10-10-unsloth-studio-27b-hybrid-offload.md`](log/2026-10-10-unsloth-studio-27b-hybrid-offload.md) | **27 B on 12 GB via `--fit` + HIP (measured)** | 2026-10-10 | ✅ |
 | [`log/2026-10-10-local-27b-offload-opencode.md`](log/2026-10-10-local-27b-offload-opencode.md) | **27 B reproduced locally (Vulkan) + OpenCode** | 2026-10-10 | ✅ |
+| [`log/2026-10-10-agentic-smoke-suite.md`](log/2026-10-10-agentic-smoke-suite.md) | **Agentic smoke suite: 8B/14B fail event-log triage** | 2026-10-10 | ✅ |
 | [`models/what-fits-12gb.md`](models/what-fits-12gb.md) | Model/quant sizing | 2026-10-10 | ⚠️ |
 
 ## The one-paragraph summary
