@@ -17,13 +17,14 @@ Start here. Each topic links to its file and shows when it was last verified.
 | [`stack/lmstudio.md`](stack/lmstudio.md) | LM Studio | 2026-10-10 | ⚠️ |
 | [`stack/ollama.md`](stack/ollama.md) | Ollama | 2026-10-10 | ⚠️ |
 | [`stack/comfyui.md`](stack/comfyui.md) | ComfyUI (image) | 2026-10-10 | ⚠️ |
-| [`stack/strata.md`](stack/strata.md) | Strata inference engine | 2026-10-10 | 📄 |
+| [`stack/strata.md`](stack/strata.md) | Strata inference engine | 2026-11-13 | ✅ |
 | [`stack/opencode.md`](stack/opencode.md) | OpenCode → local model (`local/auto`) | 2026-10-10 | ✅ |
 | [`benchmarks/2026-10-10-baseline.md`](benchmarks/2026-10-10-baseline.md) | Vulkan baseline: 4B + 8B (measured) | 2026-10-10 | ✅ |
 | [`log/2026-10-10-unsloth-studio-27b-hybrid-offload.md`](log/2026-10-10-unsloth-studio-27b-hybrid-offload.md) | **27 B on 12 GB via `--fit` + HIP (measured)** | 2026-10-10 | ✅ |
 | [`log/2026-10-10-local-27b-offload-opencode.md`](log/2026-10-10-local-27b-offload-opencode.md) | **27 B reproduced locally (Vulkan) + OpenCode** | 2026-10-10 | ✅ |
 | [`log/2026-10-10-agentic-smoke-suite.md`](log/2026-10-10-agentic-smoke-suite.md) | **Agentic smoke suite: 8B/14B fail event-log triage** | 2026-10-10 | ✅ |
 | [`log/2026-10-11-elevated-local-llm-and-compact.md`](log/2026-10-11-elevated-local-llm-and-compact.md) | **Elevated Studio launcher + Compact adopted** | 2026-10-11 | ✅ |
+| [`log/2026-11-13-strata-verification.md`](log/2026-11-13-strata-verification.md) | **Strata 0.2.13 verified on `gfx1031` (Qwen3.6-35B-A3B, ~18–20 tok/s)** | 2026-11-13 | ✅ |
 | [`models/what-fits-12gb.md`](models/what-fits-12gb.md) | Model/quant sizing | 2026-10-10 | ⚠️ |
 
 ## Governance — read this first
