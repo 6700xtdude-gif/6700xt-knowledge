@@ -15,7 +15,7 @@ real numbers depend on context length, KV-cache precision, and the engine.
 | 7–8 B | ~8–9 GB | ~4.5–5.5 GB | ✅ at Q4; keep context modest |
 | 12–14 B | ~13–15 GB | ~7–8 GB | ⚠️ tight at Q4, low context |
 | 27–30 B+ dense | — | ~14 GB (Q4_K_S) | ⚠️ **fits only with hybrid CPU offload** — see measured 27B below |
-| MoE (e.g. Qwen3.8-Flash-Next) | — | — | ⚠️ possible via **expert offload** |
+| MoE (e.g. Qwen3.8-Flash-Next) | — | — | ⚠️ possible via **expert offload** — **now measured**: a 35 B A3B MoE ran here (see below) |
 
 ## The two levers that change everything
 
@@ -33,6 +33,12 @@ real numbers depend on context length, KV-cache precision, and the engine.
 | Main assistant | **3–4 B** | Q4_K_M / Q8_0 | first fine-tune tier; comfortable |
 | Daily driver | 7–8 B | Q4_K_M | best quality that still fits |
 | Stretch | MoE / 12–14 B | Q4 + offload | only if expert offload works well |
+
+**Measured MoE counter-example (2026-11-13):** a **35 B** MoE (Qwen3.6-35B-A3B, UD-Q4_K_XL, 3 B active)
+served on this card through Strata's expert offload: only **4.40 GiB in VRAM** (20 of 256 experts per
+layer), **18.75 GiB pinned host RAM**, 6 CPU threads, 32 K context — ~540–580 tok/s prompt and
+~26 tok/s decode default, ~43 tok/s with strict greedy sampling. `✅ Verified: 2026-11-13` `[S16]` `[S24]`
+See [`../stack/strata.md`](../stack/strata.md).
 
 **First fine-tune target: 3–4 B.** QLoRA at that size fits 12 GB with room for a real context.
 

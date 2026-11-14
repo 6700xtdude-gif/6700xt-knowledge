@@ -48,7 +48,7 @@ Confidence tags:
 | Native Windows HIP (no WSL) | **Runs on `gfx1031`** via Unsloth's bundled ROCm 7.14 — no `HSA_OVERRIDE` needed | ✅ | 2026-10-10 |
 | Unsloth on `gfx1031` | Bundled **ROCm/HIP** llama.cpp serves (inference proven); training unverified | ✅ / 📄 | 2026-10-10 |
 | A **27 B** model on 12 GB | Runs via `--fit` hybrid offload — **≈4 tok/s** decode, ≈10.3 GB VRAM + ≈6.1 GB RAM | ✅ | 2026-10-10 |
-| Strata (Qwen3.6-35B-A3B-UD-Q4_K_XL) | Runs on `gfx1031` (HIP rdn2, engine 0.1.59) — ~18–20 tok/s decode | ✅ | 2026-11-13 |
+| Strata (Qwen3.6-35B-A3B-UD-Q4_K_XL) | Runs on `gfx1031` (HIP rdn2, engine 0.1.59) — **~26 tok/s** default, **~43 tok/s** with strict greedy sampling (MTP drafts) | ✅ | 2026-11-13 |
 | A local model as an *agent* (8B / 14B) | Passes bounded tasks, **fails open-ended event-log triage** | ✅ | 2026-10-10 |
 
 Full detail in [`stack/`](stack/); provenance in [`sources.md`](sources.md).
