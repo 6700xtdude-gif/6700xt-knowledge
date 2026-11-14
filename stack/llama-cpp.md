@@ -32,11 +32,15 @@ The whole point of running standalone is seeing and controlling these:
 
 | Flag | Controls |
 |---|---|
-| `-c <n>` | **context window** |
-| `--cache-type-k q8_0\|q4_0` | **KV-cache K** precision |
-| `--cache-type-v q8_0\|q4_0` | **KV-cache V** precision (note: some builds require K set too) |
-| `--flash-attn` | flash attention on/off |
-| `-ngl <n>` / `--n-gpu-layers` | layers offloaded to GPU |
+| `-c <n>` | **context window** (e.g. `-c 65536` for 64k context) |
+| `--cache-type-k q8_0\|q4_0` / `-ctk` | **KV-cache K** precision (`q4_0` essential for $\ge$32k context on 12 GB) |
+| `--cache-type-v q8_0\|q4_0` / `-ctv` | **KV-cache V** precision |
+| `--flash-attn` / `-fa on` | flash attention on/off |
+| `-ngl <n>` / `--n-gpu-layers` | layers offloaded to GPU (`-ngl 99` = full offload) |
+| `--spec-type draft-mtp` | native **Multi-Token Prediction (MTP)** speculative decoding |
+| `--spec-draft-n-max <n>` | max tokens drafted per cycle via MTP head (e.g. `2`) |
+| `-md <draft.gguf> -ngld 99` | **Dual-engine speculative decoding** (e.g. 0.5B drafter + 7B/14B verifier) |
+| `-tb <n>` | **batch threads** for CPU prompt eval & verification forward passes |
 | `--fit on\|off` | **auto-fit to device memory** — picks the GPU layer count for you (`--fit-ctx <n>` caps the context it may pick). Essential for models larger than VRAM. |
 | `--jinja` | use the model's chat template (important for tool calling) |
 | `--no-context-shift` | stop silent context truncation |

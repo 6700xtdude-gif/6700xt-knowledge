@@ -44,14 +44,17 @@ Confidence tags:
 |---|---|---|---|
 | AMD ROCm/HIP SDK on Windows | ❌ **Officially unsupported** (`gfx1031`) | 📄 | 2026-07-31 |
 | `HSA_OVERRIDE_GFX_VERSION=10.3.0` | Still the common ROCm workaround | ⚠️ | 2026-10-10 |
-| Vulkan (llama.cpp / LM Studio) | Works, no ROCm needed | ✅ | 2026-10-10 |
+| Vulkan (llama.cpp build 12374+) | **Runs natively** with FlashAttention (`-fa on`) & MTP speculation | ✅ | 2026-11-14 |
 | Native Windows HIP (no WSL) | **Runs on `gfx1031`** via Unsloth's bundled ROCm 7.14 — no `HSA_OVERRIDE` needed | ✅ | 2026-10-10 |
 | Unsloth on `gfx1031` | Bundled **ROCm/HIP** llama.cpp serves (inference proven); training unverified | ✅ / 📄 | 2026-10-10 |
-| A **27 B** model on 12 GB | Runs via `--fit` hybrid offload — **≈4 tok/s** decode, ≈10.3 GB VRAM + ≈6.1 GB RAM | ✅ | 2026-10-10 |
+| **100% VRAM 27B** (`IQ2_M`) | Sized to fit 12 GB VRAM — **`22.61 tok/s`** (JSON **24.2 t/s**) via MTP speculation | ✅ | 2026-11-14 |
+| **27B Dense Hybrid** (`UD-Q4_K_XL`) | Runs via 45 VRAM / 20 DDR4 — **`7.54 tok/s`** on 2-DIMM DDR4-3200 (vs 6.13 t/s on 4-DIMM) | ✅ | 2026-11-14 |
+| **Qwen 3.6 35B MoE on Vulkan** | Hybrid offload (16 VRAM / 25 DDR4) — **`16.78 tok/s`** decode (115 ms TTFT) | ✅ | 2026-11-14 |
+| **Speculative 14B / 7B (JEV)** | 96 MB Infinity Cache drafter — **`62.3 tok/s`** on 14B, **`95.3 tok/s`** on 7B | ✅ | 2026-11-14 |
 | Strata (Qwen3.6-35B-A3B-UD-Q4_K_XL) | Runs on `gfx1031` (HIP rdn2, engine 0.1.59) — **~26 tok/s** default, **~43 tok/s** with strict greedy sampling (MTP drafts) | ✅ | 2026-11-13 |
 | A local model as an *agent* (8B / 14B) | Passes bounded tasks, **fails open-ended event-log triage** | ✅ | 2026-10-10 |
 
-Full detail in [`stack/`](stack/); provenance in [`sources.md`](sources.md).
+Full detail in [`stack/`](stack/), [`benchmarks/`](benchmarks/), and companion repo [`6700XT-Afterburner`](https://github.com/6700xtdude-gif/6700XT-Afterburner); provenance in [`sources.md`](sources.md).
 
 ## Repo map
 

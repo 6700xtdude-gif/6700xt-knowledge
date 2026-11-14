@@ -10,9 +10,9 @@ Start here. Each topic links to its file and shows when it was last verified.
 | [`MINUTES.md`](MINUTES.md) | **Session minutes** — incl. reconstructed 2026-10-10 sitting | 2026-10-11 | ✅ |
 | [`hardware/6700xt.md`](hardware/6700xt.md) | Card specs (`gfx1031`, 12 GB) | 2026-10-10 | 📄 |
 | [`stack/rocm-windows.md`](stack/rocm-windows.md) | ROCm/HIP on Windows | 2026-07-31 | 📄 |
-| [`stack/vulkan.md`](stack/vulkan.md) | Vulkan path | 2026-10-10 | ✅ |
+| [`stack/vulkan.md`](stack/vulkan.md) | Vulkan path (FlashAttn & MTP Speculation) | 2026-11-14 | ✅ |
 | [`stack/hip.md`](stack/hip.md) | Native HIP, no WSL | 2026-10-10 | ✅ |
-| [`stack/llama-cpp.md`](stack/llama-cpp.md) | llama.cpp / `llama serve` | 2026-10-10 | ✅ |
+| [`stack/llama-cpp.md`](stack/llama-cpp.md) | llama.cpp / `llama-server.exe` flags | 2026-11-14 | ✅ |
 | [`stack/unsloth.md`](stack/unsloth.md) | Unsloth (train + bundled ROCm serving) | 2026-10-10 | ✅ |
 | [`stack/lmstudio.md`](stack/lmstudio.md) | LM Studio | 2026-10-10 | ⚠️ |
 | [`stack/ollama.md`](stack/ollama.md) | Ollama | 2026-10-10 | ⚠️ |
@@ -20,13 +20,15 @@ Start here. Each topic links to its file and shows when it was last verified.
 | [`stack/strata.md`](stack/strata.md) | Strata inference engine | 2026-11-13 | ✅ |
 | [`stack/opencode.md`](stack/opencode.md) | OpenCode → local model (`local/auto`) | 2026-10-10 | ✅ |
 | [`benchmarks/2026-10-10-baseline.md`](benchmarks/2026-10-10-baseline.md) | Vulkan baseline: 4B + 8B (measured) | 2026-10-10 | ✅ |
+| [`benchmarks/2026-11-14-afterburner-matrix.md`](benchmarks/2026-11-14-afterburner-matrix.md) | **Empirical Afterburner Matrix: 27B IQ2_M, 35B MoE, 14B Speculative** | 2026-11-14 | ✅ |
 | [`log/2026-10-10-unsloth-studio-27b-hybrid-offload.md`](log/2026-10-10-unsloth-studio-27b-hybrid-offload.md) | **27 B on 12 GB via `--fit` + HIP (measured)** | 2026-10-10 | ✅ |
 | [`log/2026-10-10-local-27b-offload-opencode.md`](log/2026-10-10-local-27b-offload-opencode.md) | **27 B reproduced locally (Vulkan) + OpenCode** | 2026-10-10 | ✅ |
 | [`log/2026-10-10-agentic-smoke-suite.md`](log/2026-10-10-agentic-smoke-suite.md) | **Agentic smoke suite: 8B/14B fail event-log triage** | 2026-10-10 | ✅ |
 | [`log/2026-10-11-elevated-local-llm-and-compact.md`](log/2026-10-11-elevated-local-llm-and-compact.md) | **Elevated Studio launcher + Compact adopted** | 2026-10-11 | ✅ |
 | [`log/2026-11-13-strata-verification.md`](log/2026-11-13-strata-verification.md) | **Strata 0.2.13 verified on `gfx1031` (Qwen3.6-35B-A3B)** | 2026-11-13 | ✅ |
 | [`log/2026-11-13-strata-mtp-sampling.md`](log/2026-11-13-strata-mtp-sampling.md) | **MTP `0 of 0` explained: ~26 → ~43 tok/s with strict greedy (measured)** | 2026-11-13 | ✅ |
-| [`models/what-fits-12gb.md`](models/what-fits-12gb.md) | Model/quant sizing | 2026-10-10 | ⚠️ |
+| [`log/2026-11-14-afterburner-benchmarks-and-2dimm-efficiency.md`](log/2026-11-14-afterburner-benchmarks-and-2dimm-efficiency.md) | **Afterburner Benchmarks, 100% VRAM 27B, & 2-DIMM IMC Efficiency** | 2026-11-14 | ✅ |
+| [`models/what-fits-12gb.md`](models/what-fits-12gb.md) | Model/quant sizing (incl. IQ2_M 27B) | 2026-11-14 | ✅ |
 
 ## Governance — read this first
 

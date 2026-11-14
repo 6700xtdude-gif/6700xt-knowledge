@@ -34,6 +34,10 @@ Types: `primary` (vendor/maintainer), `repo`, `news`, `forum`. Local artifacts o
 | S24 | local `...\install\strata-qwen36-ud-q4_k_xl.log` (new lines, 2026-11-13 20:3x) | primary | 2026-11-13 | Live 4-pair interleaved measurement on gfx1031, 128 generated tokens each: 22.6 / 25.5 / 27.5 / 27.1 tok/s with `0 of 0` drafts, then 42.2 / 43.6 / 42.4 / 42.8 tok/s with 81/96, 78/102, 78/98, 74/106 drafts accepted |
 | S25 | local `.strata\data\native-instances\59f33a13-5ac4-4c2c-87cf-385c85ceb4f4.json` | primary | 2026-11-13 | The app-launched server uses port `18500` (`port` field; the python process is `serve.server ... --port 18500`), so `8080` is not the app's port. Also records `vram_reserve_mib: 1536` and `ui_reserve_applied: 1536` |
 | S26 | https://github.com/Niko1221/Strata/issues/5023 + local engine log | repo | 2026-11-13 | The q36 engine prints `ignoring --vram-reserve-mib 1536 (not an option of this engine)` while the app records the reserve as applied. Open, no comments; the ask is to refuse the flag before start. Static check: `src/qwen35/q36_engine.cu` (~line 3809) prints the `ignoring ... (not an option of this engine)` line |
+| S27 | https://github.com/6700xtdude-gif/6700XT-Afterburner | repo | 2026-11-14 | Companion repository: 100% VRAM 27B quantization (`IQ2_M`), dual-engine speculative decoding (JEV), FlashAttention, and standardized bench suite |
+| S28 | https://github.com/6700xtdude-gif/6700XT-Afterburner/blob/main/docs/PROJECT_9696XT_REPORT.md | primary | 2026-11-14 | Project 9696XT high-context inference audit: Twin-96 architecture (96MB Infinity Cache + 96GB/32GB host RAM), Qwen 3.6 35B MoE vs Qwen 3.8 27B benchmark matrix |
+| S29 | local `C:\Users\6700XT\Documents\Strata\bench\reports\` | primary | 2026-11-14 | Empirical benchmarks on RX 6700 XT 12GB + Ryzen 5600 + 32GB RAM: 27B IQ2_M (22.61 t/s), 35B MoE (16.78 t/s), 27B Hybrid (7.54 t/s on 2-DIMM vs 6.13 t/s on 4-DIMM) |
+| S30 | https://www.youtube.com/watch?v=EudtrgdS4JU | primary | 2026-11-14 | Alex (@AlexFP16) YouTube investigation: Qwen 3.6 35B on 12GB VRAM (Strata vs llama.cpp on RTX 3060 12GB + Ryzen 5600) |
 
 ## Housekeeping
 

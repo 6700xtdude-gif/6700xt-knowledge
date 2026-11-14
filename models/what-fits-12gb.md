@@ -9,13 +9,13 @@ real numbers depend on context length, KV-cache precision, and the engine.
 
 `params × bits/8` bytes, plus KV cache + overhead:
 
-| Model size | Q8_0 | Q4_K_M | Fits 12 GB? |
-|---|---|---|---|
-| 3–4 B | ~4–5 GB | ~2.5–3 GB | ✅ very comfortable |
-| 7–8 B | ~8–9 GB | ~4.5–5.5 GB | ✅ at Q4; keep context modest |
-| 12–14 B | ~13–15 GB | ~7–8 GB | ⚠️ tight at Q4, low context |
-| 27–30 B+ dense | — | ~14 GB (Q4_K_S) | ⚠️ **fits only with hybrid CPU offload** — see measured 27B below |
-| MoE (e.g. Qwen3.8-Flash-Next) | — | — | ⚠️ possible via **expert offload** — **now measured**: a 35 B A3B MoE ran here (see below) |
+| Model size | Q8_0 | Q4_K_M | IQ2_M (sub-3-bit) | Fits 12 GB? |
+|---|---|---|---|---|
+| 3–4 B | ~4–5 GB | ~2.5–3 GB | — | ✅ very comfortable |
+| 7–8 B | ~8–9 GB | ~4.5–5.5 GB | — | ✅ at Q4; keep context modest |
+| 12–14 B | ~13–15 GB | ~7–8 GB | — | ✅ at Q4; **62.3 t/s** with dual-engine speculation |
+| 27–30 B+ dense | — | ~14 GB (Q4_K_S) | **~9.5–10.2 GB** | ✅ **100% VRAM in IQ2_M** (**22.61 t/s**) `[S27]`; Q4 requires hybrid offload (**7.54 t/s**) |
+| MoE (35B A3B) | — | ~21.3 GB | — | ✅ **16.78 t/s** via hybrid offload (16 VRAM / 25 DDR4) `[S29]` |
 
 ## The two levers that change everything
 
@@ -97,10 +97,21 @@ See [`../scripts/windows/README.md`](../scripts/windows/README.md) (launcher) an
 `-ngl 40`), **9.8 GB VRAM**, **4.65 tok/s** decode, and OpenCode `local/auto` works — including tool calls.
 `✅ Verified: 2026-10-10` See [`../log/2026-10-10-local-27b-offload-opencode.md`](../log/2026-10-10-local-27b-offload-opencode.md).
 
-Full detail: [`../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md`](../log/2026-10-10-unsloth-studio-27b-hybrid-offload.md).
+### A 27 B on 12 GB — 100% VRAM Saturation Tier (`IQ2_M` + MTP Speculation, 2026-11-14)
 
-## Still to measure
+By quantizing **Qwen 3.8 27B** down to **`IQ2_M`** using an importance matrix and preserving the native Multi-Token Prediction (MTP) drafting head in `Q4_K` (`[S27]`), the **entire 27B model fits 100% inside the RX 6700 XT's 12 GB VRAM** (65/65 layers on GPU, 0 in DDR4).
 
-- [ ] 12–14B Q4 at low context (the "tight" tier) — where does it start spilling to CPU?
-- [ ] 27B with a smaller quant (Q3_K_XL) — does the whole model land on the GPU, and at what tok/s?
-- [ ] Decode *floor*: what fraction of the ~4 tok/s is CPU layers vs PCIe transfer vs the 248K vocab projection?
+| Configuration | Allocation | KV Precision | Context | Overall Decode (t/s) |
+|---|---|---|---|---|
+| **100% VRAM Resident** (`IQ2_M` + MTP) | **65 / 65 on GPU** | `q4_0 / q4_0` | 65,536 (64k) | **`22.61 t/s`** (JSON: **24.22 t/s**, Code: **23.69 t/s**) |
+| **Hybrid Offload** (`UD-Q4_K_XL`, 32GB RAM, 2-DIMM) | 45 GPU / 20 DDR4 | `q4_0 / q4_0` | 65,536 (64k) | **`7.54 t/s`** (JSON: **8.64 t/s**, Code: **7.59 t/s**) |
+| **Hybrid Offload** (`UD-Q4_K_XL`, 64GB RAM, 4-DIMM) | 45 GPU / 20 DDR4 | `q4_0 / q4_0` | 65,536 (64k) | **`6.13 t/s`** (JSON: **6.45 t/s**, Code: **6.15 t/s**) |
+| **Legacy Hybrid** (`UD-Q4_K_S`, 2026-10-10) | 40 GPU / 26 DDR4 | `q8_0 / q8_0` | 32,512 (32k) | **`4.00 t/s`** |
+
+`✅ Verified: 2026-11-14` `[S27]` `[S29]`. See [`../benchmarks/2026-11-14-afterburner-matrix.md`](../benchmarks/2026-11-14-afterburner-matrix.md).
+
+## Resolved Questions (2026-11-14)
+
+- [x] **12–14B Q4 at low context:** `Qwen2.5-Coder-14B-Instruct-Q4_K_M` (8.37 GiB) fits 100% inside 12 GB VRAM. Runs at **37.4 t/s baseline**, and accelerates to **60.9–62.3 t/s** using dual-engine speculative decoding ($K=3$). `✅ Verified: 2026-11-14` `[S27]`
+- [x] **27B with sub-3-bit quant (IQ2_M):** Fits 100% in VRAM at 9.54 GB weights. Reaches **22.61 t/s** decode (5.7x speedup over DDR4 hybrid). `✅ Verified: 2026-11-14` `[S27]`
+- [x] **Decode floor mechanism:** The ~4–7 t/s bottleneck on hybrid offload is strictly the **32 GiB/s DDR4 memory bus cliff**. 2-DIMM DDR4-3200 (1 DPC, 1T command rate) yields a **+23.0% speedup** over 4 DIMMs (7.54 vs 6.13 t/s). `✅ Verified: 2026-11-14` `[S29]`
