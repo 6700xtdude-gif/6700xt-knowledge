@@ -49,8 +49,8 @@ Measured here on `gfx1031`, four interleaved pairs, 128 generated tokens each: `
 | `temperature 0, top_p 1.0, presence_penalty 0, frequency_penalty 0, repetition_penalty 1` | 42.2 / 43.6 / 42.4 / 42.8 tok/s | 81/96, 78/102, 78/98, 74/106 |
 
 So MTP is worth roughly **1.7×** decode here, and the default path silently leaves it on the table. This is
-tracked upstream as #3354 (open, with an opt-in `STRATA_Q36_MTP_SAMPLED` in #3773); it is not specific to
-this card. `[S22]` `[S23]`
+tracked upstream as #3354 (open, with an opt-in `STRATA_Q36_MTP_SAMPLED` in #3773); this machine's numbers
+were added to that thread on 2026-11-13. It is not specific to this card. `[S22]` `[S23]`
 
 Practical consequence: the ~18–20 tok/s every earlier note quoted was the **no-draft** rate. A client that
 wants the faster path must send the four greedy fields explicitly; leaving them out does **not** mean "off".
@@ -63,8 +63,8 @@ so the UI believes a 1.5 GiB reserve is held for the compositor and the vision r
 drops the flag with `ignoring --vram-reserve-mib 1536 (not an option of this engine)` and never applies it.
 `✅ Verified: 2026-11-13` `[S26]`
 
-That is upstream #5023 (open, no comments when last read): the fix asked for is to refuse the flag before
-start instead of looking like it was applied. It matters here because the reserve is what keeps the desktop
+That is upstream #5023 (open; evidence from this machine added 2026-11-13): the fix asked for is to refuse the
+flag before start instead of looking like it was applied. It matters here because the reserve is what keeps the desktop
 and `strata-vision` from pushing the engine into an OOM; the engine was still reporting 3.37 GiB free and
 served normally, so no crash was seen — but the setting is a no-op. `[S26]`
 

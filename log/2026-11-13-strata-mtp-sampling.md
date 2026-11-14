@@ -74,6 +74,10 @@ Do not quote "18–20 tok/s" as Strata's ceiling on this card.
 
 - [x] Explain `drafts accepted 0 of 0` → model-card sampling; already tracked upstream (#3354).
 - [ ] Confirm ~43 tok/s on a 1–2 K token generation (drafts may decay as the window grows).
+- [x] Add this evidence upstream: commented on
+      [#5023](https://github.com/Niko1221/Strata/issues/5023#issuecomment-6870536891) (app records the reserve
+      as applied; engine drops it) and
+      [#3354](https://github.com/Niko1221/Strata/issues/3354#issuecomment-6870537102) (Windows numbers above).
 - [ ] Test whether putting a `sampling` block in the app's run config makes the app's own chat path greedy,
       which is the documented workaround in #3354.
 - [ ] Do **not** file a new MTP issue: #3354 covers it and #5609 was closed with the same cause. If anything,
