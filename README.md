@@ -53,7 +53,6 @@ flowchart TD
     end
 
     subgraph ApplicationLayer ["Control Plane & Agents"]
-        Dashboard["AMD Adrenalin Red Dashboard\n(http://localhost:3333 · Telemetry & Presets)"]
         PiAgent["Pi Agent CLI & Web Harness\n(~/.pi/agent · Autonomous Tool Execution)"]
         Snipping["Windows Snipping Tool Integration\n(Instant Vision / Screenshot Ingestion)"]
     end
@@ -63,7 +62,6 @@ flowchart TD
     VK --> FA
     FA --> LlamaServer
     MTP --> LlamaServer
-    LlamaServer --> Dashboard
     LlamaServer --> PiAgent
     CPU --> RAM
     RAM -. Hybrid Offload (Large Models) .-> LlamaServer
@@ -93,19 +91,12 @@ Every metric recorded below was directly measured on host `SANDBOX` using native
 
 ## Software Ecosystem & Tools
 
-### 1. AMD Adrenalin Red Dashboard (`http://localhost:3333`)
-A custom, standalone telemetry and model control center styled directly after **AMD Software: Adrenalin Edition**:
-- **Live SVG Circular Gauges & Area Sparklines:** Visualizes VRAM allocation, token generation velocity (t/s), board power (W), CPU utilization, and 64GB DDR4 system memory.
-- **Dynamic Model Presets:** 1-click loading with pre-tuned context length, FlashAttention, seed defaults, and sampling temperatures.
-- **Visual VRAM Unloader:** Flushes GPU GDDR6 allocation with animated progress drain and grayed-out safety state.
-- **Embedded Agent Hub:** Interactive Pi CLI launcher and direct chat interface with token speed measurement.
-
-### 2. Pi Autonomous Agent (`~/.pi/agent`)
+### 1. Pi Autonomous Agent (`~/.pi/agent`)
 - Integrated with `llama-server.exe` through native Windows endpoints.
 - Preconfigured in `models.json` with `local` and `afterburner` provider definitions.
 - Desktop interactive terminal launcher (`Launch_Pi_Interactive.cmd`) for dedicated autonomous shell tasks.
 
-### 3. Windows Snipping Tool Vision Feed
+### 2. Windows Snipping Tool Vision Feed
 - Automatic screenshot detection via `C:\Users\6700XT\.gemini\antigravity\skills\windows-snipping-tool\`.
 - Any capture triggered via `Win + Shift + S` is immediately ingested for AI inspection and debugging.
 
