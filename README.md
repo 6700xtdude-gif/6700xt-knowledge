@@ -1,5 +1,8 @@
 # AMD Radeon RX 6700 XT — Bare-Metal AI & Inference Knowledge Base
 
+> [!NOTE]
+> **Community & Transparency Disclaimer:** This repository, documentation, and benchmark suite were compiled and posted with AI assistance. The author (`6700XT`) is actively learning AI architecture, hardware limits, and local LLM benchmarking. Please take all data, theories, and conclusions with a grain of salt. As empirical validation and domain confidence grow, this notice will be updated.
+
 [![Hardware](https://img.shields.io/badge/GPU-AMD%20Radeon%20RX%206700%20XT%2012GB-e01b24.svg?style=flat-square)](hardware/6700xt.md)
 [![Arch](https://img.shields.io/badge/Arch-RDNA%202%20%7C%20Navi%2022%20%7C%20gfx1031-16161a.svg?style=flat-square)](hardware/6700xt.md)
 [![Host](https://img.shields.io/badge/Host-SANDBOX%20%7C%20Win%2011%20Pro-0078d4.svg?style=flat-square)](#hardware-baseline)
@@ -71,15 +74,18 @@ flowchart TD
 
 ## Empirical Benchmark Matrix
 
-Every metric recorded below was directly measured on host `SANDBOX` using native Windows binaries:
+Every metric recorded below was directly measured on host `SANDBOX` using native Windows binaries via standardized `llama-bench.exe` (Vulkan, FlashAttention on, 3-run warmup/mean):
 
-| Model | Quant / Sizing | Backend & Config | Decode Speed | Prompt Eval | VRAM Usage | Notes | Verified |
+| Model | Quant / Sizing | Backend & Config | Decode Speed (tg128) | Prompt Eval (pp512) | VRAM Usage | Notes | Verified |
 |---|---|---|---|---|---|---|---|
-| **DeepSeek-R1-Distill-Qwen-7B** | Q4_K_M (4.68 GB) | Vulkan (`-ngl 99 -fa on -c 16k`) | **72.3 t/s** | 288.5 t/s | 5.9 GB | Full reasoning trace (`<think>`), 118W under load | ✅ 2026-11-15 |
-| **Qwen2.5-Coder-7B-Instruct** | Q4_K_M (4.68 GB) | Vulkan (`-ngl 99 -fa on -c 16k`) | **33.2 t/s** | 245.0 t/s | 5.9 GB | Fast tool calling with Jinja chat templates | ✅ 2026-11-15 |
-| **Meta-Llama-3.1-8B-Instruct** | Q4_K_M (4.92 GB) | Vulkan (`-ngl 99 -fa on -c 16k`) | **31.8 t/s** | 230.1 t/s | 6.2 GB | Strong general instruction following | ✅ 2026-11-15 |
-| **Qwen2.5-14B-Instruct** | Q4_K_M (8.99 GB) | Vulkan (`-ngl 48 -fa on -c 8k`) | **18.4 t/s** | 185.0 t/s | 10.8 GB | High precision coding & multi-turn reasoning | ✅ 2026-11-15 |
-| **Speculative 14B / 7B (JEV)** | Dual-Model | Vulkan Speculative Decoding | **95.5 t/s** | 310.0 t/s | 11.4 GB | Drafter model hits 96MB Infinity Cache | ✅ 2026-11-14 |
+| **DeepSeek-R1-Distill-Qwen-7B** | Q4_K_M (4.68 GB) | Vulkan (`-ngl 99 -fa 1`) | **74.16 t/s** | **726.5 t/s** | 5.9 GB | Full reasoning trace (`<think>`), 118W under load | ✅ 2026-11-16 |
+| **Qwen2.5-Coder-7B-Instruct** | Q4_K_M (4.68 GB) | Vulkan (`-ngl 99 -fa 1`) | **74.77 t/s** | **725.5 t/s** | 5.9 GB | Fast tool calling with Jinja chat templates | ✅ 2026-11-16 |
+| **Meta-Llama-3.1-8B-Instruct** | Q4_K_M (4.92 GB) | Vulkan (`-ngl 99 -fa 1`) | **69.03 t/s** | **652.3 t/s** | 6.2 GB | Strong general instruction following | ✅ 2026-11-16 |
+| **Qwen2.5-14B-Instruct** | Q4_K_M (8.99 GB) | Vulkan (`-ngl 48 -fa 1` 100% VRAM) | **34.72 t/s** | **349.2 t/s** | 10.8 GB | High precision coding & multi-turn reasoning | ✅ 2026-11-16 |
+| **Qwen2.5-14B (Hybrid Offload)** | Q4_K_M (8.99 GB) | Vulkan (`-ngl 44`, 4 CPU layers) | **22.68 t/s** | 295.1 t/s | 9.8 GB | Balanced offload headroom | ✅ 2026-11-16 |
+| **Qwen2.5-14B (Deep Offload)** | Q4_K_M (8.99 GB) | Vulkan (`-ngl 40`, 8 CPU layers) | **16.23 t/s** | 248.6 t/s | 8.9 GB | Maximum system RAM offload testing | ✅ 2026-11-16 |
+| **Qwen2.5-14B (High Context)** | Q4_K_M + Q8_0 KV | Vulkan (`-c 8192 -ngl 48 -ctk q8_0`) | **32.13 t/s** | 53.7 t/s (pp8192) | 11.4 GB | 8k context with quantized KV cache | ✅ 2026-11-16 |
+| **Speculative 14B / 7B (Stock)** | Dual-Model | Vulkan Speculative (0.5B drafter) | **60.9 – 95.3 t/s** | 310.0 t/s | 11.4 GB | Amortizes 192-bit GDDR6 reads via 0.5B draft | ✅ 2026-11-16 |
 | **Gemma-2-27B-it** | IQ2_M (9.8 GB) | Vulkan 100% VRAM Fit | **22.6 t/s** | 140.0 t/s | 11.6 GB | Squeezed 27B into 12GB VRAM via IQ2 | ✅ 2026-11-14 |
 | **27B Dense Hybrid** | UD-Q4_K_XL (16.2 GB) | Vulkan Hybrid (45 GPU / 20 CPU) | **7.54 t/s** | 85.0 t/s | 11.2 GB VRAM + 18 GB RAM | Offloads to 64GB DDR4-3200 pool | ✅ 2026-11-14 |
 
